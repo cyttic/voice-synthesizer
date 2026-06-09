@@ -1,0 +1,24 @@
+# Datasets / generated output
+dataset/
+
+# Audio files
+*.wav
+*.flac
+*.mp3
+*.mp4
+*.m4a
+*.ogg
+*.aac
+*.opus
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+
+# Model checkpoints / caches
+*.pt
+*.pth
+.cache/
