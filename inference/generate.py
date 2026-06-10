@@ -20,8 +20,21 @@ XTTS v2 is non-commercial (CPML) — R&D use only.
 import argparse
 import os
 
+import numpy as np
+import soundfile as sf
 import torch
 import torchaudio
+
+# torchcodec (torchaudio's default decoder) is broken under this machine's
+# CUDA/driver mismatch. Replace torchaudio.load with a soundfile-based loader
+# so XTTS's internal load_audio() never touches torchcodec. Must run before
+# any torchaudio.load call.
+def _sf_load(path, *args, **kwargs):
+    data, sr = sf.read(str(path), dtype="float32", always_2d=True)  # (frames, ch)
+    return torch.from_numpy(data.T), sr                             # (ch, frames)
+
+torchaudio.load = _sf_load
+
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
 
@@ -58,10 +71,10 @@ def generate(model: Xtts, text: str, reference_wav: str, output: str,
         temperature=temperature,
     )
 
-    wav = torch.tensor(out["wav"]).unsqueeze(0)  # (1, samples)
-    torchaudio.save(output, wav, 24000)
-    duration = wav.shape[1] / 24000
-    print(f"Saved {output}  ({duration:.1f}s)")
+    # Save via soundfile (also avoids torchcodec on the write path)
+    wav = np.asarray(out["wav"], dtype="float32")
+    sf.write(output, wav, 24000)
+    print(f"Saved {output}  ({len(wav) / 24000:.1f}s)")
 
 
 def main():
