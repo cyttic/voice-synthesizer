@@ -15,6 +15,7 @@ dataset/
 __pycache__/
 *.pyc
 .venv/
+.venv*/
 env/
 venv/
 
@@ -22,3 +23,26 @@ venv/
 *.pt
 *.pth
 .cache/
+user_settings.json
+
+# Piper voices / training checkpoints
+*.onnx
+*.onnx.json
+*.ckpt
+
+# Other heavy model weights / indexes / archives
+*.index
+*.safetensors
+*.gguf
+*.bin
+*.h5
+*.npy
+*.npz
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# Downloaded HF model dirs (source of truth is HuggingFace)
+lecturer-ru-piper/
